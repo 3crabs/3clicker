@@ -8,7 +8,9 @@ local scene = composer.newScene()
 -- -----------------------------------------------------------------------------------
 
 
-
+local function gotoGame()
+    composer.gotoScene("game", { time = 800, effect = "crossFade" })
+end
 
 
 -- -----------------------------------------------------------------------------------
@@ -21,6 +23,16 @@ function scene:create(event)
     local sceneGroup = self.view
     -- Code here runs when the scene is first created but has not yet appeared on screen
 
+    local background = display.newImageRect(sceneGroup, "assets/background_menu.jpg", 540, 960)
+    background.x = display.contentCenterX
+    background.y = display.contentCenterY
+
+    local title = display.newText(sceneGroup, "3clicker", display.contentCenterX, 70, native.systemFont, 48)
+    title:setFillColor(1, 1, 1, 0.9)
+
+    local playButton = display.newText(sceneGroup, "играть", display.contentCenterX, 350, native.systemFont, 32)
+    playButton:setFillColor(1, 1, 1, 0.7)
+    playButton:addEventListener("tap", gotoGame)
 end
 
 
