@@ -23,7 +23,7 @@ function scene:create(event)
     -- Code here runs when the scene is first created but has not yet appeared on screen
 
     display.newText(sceneGroup, "Мы боремся за то чтобы этот раздел\nбыл доступен вам!\nС уважение команда 3CRABS games", display.contentCenterX, display.contentCenterY)
-    local shopButton = display.newText(sceneGroup, "В меню", display.contentCenterX + 180, display.contentCenterY + 90)
+    local shopButton = display.newText(sceneGroup, "перейти в меню", display.contentCenterX - 130, display.contentCenterY + 100)
     shopButton:addEventListener("tap", gotoMenu)
 end
 
@@ -55,7 +55,7 @@ function scene:hide(event)
 
     elseif (phase == "did") then
         -- Code here runs immediately after the scene goes entirely off screen
-
+        composer.removeScene("src.plug")
     end
 end
 
