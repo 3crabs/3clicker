@@ -11,11 +11,13 @@ local hero
 local countTab = 0
 local countTabText
 local prevTapTime = 0
-local levelTime = 4
+local levelTime = 40
 local timeText
 local levelCount = 200
+local gameLoopTimer
 
 local function gotoResultScreen()
+    timer.cancel( gameLoopTimer )
     composer.gotoScene("src.plug", { time = 800, effect = "crossFade" })
 end
 
