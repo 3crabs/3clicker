@@ -86,6 +86,10 @@ function scene:create(event)
     countTabText = display.newText(sceneGroup, countTab, display.contentCenterX, display.contentCenterY / 2, native.systemFont, 64)
     timeText = display.newText(sceneGroup, levelTime, display.contentCenterX, display.contentCenterY / 3, native.systemFont, 64)
 
+    local levelTabText = display.newText(sceneGroup, "Цель уровня: "..levelCount, 20, 20, native.systemFont, 32)
+    levelTabText.anchorX = 0
+    levelTabText.anchorY = 0
+
     hero = display.newImageRect(sceneGroup, "assets/hero.png", 316, 264)
     hero.x = display.contentCenterX
     hero.y = display.contentCenterY + display.contentCenterY / 3
