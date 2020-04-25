@@ -12,6 +12,14 @@ local function gotoGame()
     composer.gotoScene("game", { time = 800, effect = "crossFade" })
 end
 
+local function gotoRecords()
+    composer.gotoScene("records", { time = 800, effect = "crossFade" })
+end
+
+local function gotoShop()
+    composer.gotoScene("shop", { time = 800, effect = "crossFade" })
+end
+
 
 -- -----------------------------------------------------------------------------------
 -- Scene event functions
@@ -27,9 +35,23 @@ function scene:create(event)
     background.x = display.contentCenterX
     background.y = display.contentCenterY
 
-    local playButton = display.newText(sceneGroup, "играть", display.contentCenterX, 365, native.systemFont, 32)
-    playButton:setFillColor(1, 1, 1, 0.7)
+    local playButton = display.newImageRect(sceneGroup, "assets/button_menu.png", 250, 70)
+    playButton.x = display.contentCenterX + 120
+    playButton.y = display.contentCenterY - 90
     playButton:addEventListener("tap", gotoGame)
+    display.newText(sceneGroup, "Играть", display.contentCenterX + 120, display.contentCenterY - 90)
+
+    local recordsButton = display.newImageRect(sceneGroup, "assets/button_menu.png", 250, 70)
+    recordsButton.x = display.contentCenterX + 120
+    recordsButton.y = display.contentCenterY
+    recordsButton:addEventListener("tap", gotoRecords)
+    display.newText(sceneGroup, "Рекорды", display.contentCenterX + 120, display.contentCenterY)
+
+    local shopButton = display.newImageRect(sceneGroup, "assets/button_menu.png", 250, 70)
+    shopButton.x = display.contentCenterX + 120
+    shopButton.y = display.contentCenterY + 90
+    shopButton:addEventListener("tap", gotoShop)
+    display.newText(sceneGroup, "Магазин", display.contentCenterX + 120, display.contentCenterY + 90)
 end
 
 
