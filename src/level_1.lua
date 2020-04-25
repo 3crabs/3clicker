@@ -7,17 +7,27 @@ local scene = composer.newScene()
 -- the scene is removed entirely (not recycled) via "composer.removeScene()"
 -- -----------------------------------------------------------------------------------
 
+local hero
+local countCoin = 0
+local countCoinText
+local prevTapTime = 0
 
-local function gotoGame()
-    composer.gotoScene("src.level_1", { time = 800, effect = "crossFade" })
-end
+local function tapOnHero()
+    countCoin = countCoin + 1
+    countCoinText.text = countCoin
 
-local function gotoRecords()
-    composer.gotoScene("src.plug", { time = 800, effect = "crossFade" })
-end
+    -- анимация героя
+    transition.to(hero, { time = 50, xScale = 1.1, yScale = 1.1 })
+    transition.to(hero, { time = 50, delay = 55, xScale = 1, yScale = 1 })
 
-local function gotoShop()
-    composer.gotoScene("src.plug", { time = 800, effect = "crossFade" })
+    -- анимация количества монет
+    local currentTapTime = system.getTimer()
+    local delta = currentTapTime - prevTapTime
+    local scale = 1 / (delta / 300)
+    if scale < 1 then scale = 1 end
+    transition.to(countCoinText, { time = 50, xScale = scale, yScale = scale })
+    transition.to(countCoinText, { time = 100, delay = 55, xScale = 1, yScale = 1 })
+    prevTapTime = currentTapTime
 end
 
 
@@ -31,27 +41,31 @@ function scene:create(event)
     local sceneGroup = self.view
     -- Code here runs when the scene is first created but has not yet appeared on screen
 
-    local background = display.newImageRect(sceneGroup, "assets/background_menu.png", 540, 960)
-    background.x = display.contentCenterX
-    background.y = display.contentCenterY
+    countCoinText = display.newText(countCoin, display.contentCenterX, display.contentCenterY / 2, native.systemFont, 64)
 
-    local playButton = display.newImageRect(sceneGroup, "assets/button_menu.png", 250, 70)
-    playButton.x = display.contentCenterX + 120
-    playButton.y = display.contentCenterY - 90
-    playButton:addEventListener("tap", gotoGame)
-    display.newText(sceneGroup, "Играть", display.contentCenterX + 120, display.contentCenterY - 90)
+    local options = {
+        -- Required parameters
+        width = 316,
+        height = 264,
+        numFrames = 1,
 
-    local recordsButton = display.newImageRect(sceneGroup, "assets/button_menu.png", 250, 70)
-    recordsButton.x = display.contentCenterX + 120
-    recordsButton.y = display.contentCenterY
-    recordsButton:addEventListener("tap", gotoRecords)
-    display.newText(sceneGroup, "Рекорды", display.contentCenterX + 120, display.contentCenterY)
-
-    local shopButton = display.newImageRect(sceneGroup, "assets/button_menu.png", 250, 70)
-    shopButton.x = display.contentCenterX + 120
-    shopButton.y = display.contentCenterY + 90
-    shopButton:addEventListener("tap", gotoShop)
-    display.newText(sceneGroup, "Магазин", display.contentCenterX + 120, display.contentCenterY + 90)
+        -- Optional parameters; used for scaled content support
+        sheetContentWidth = 316, -- width of original 1x size of entire sheet
+        sheetContentHeight = 264 -- height of original 1x size of entire sheet
+    }
+    local sequenceData = {
+        name = "walking",
+        start = 1,
+        count = 3,
+        time = 300,
+        loopCount = 2, -- Optional ; default is 0 (loop indefinitely)
+        loopDirection = "forward" -- Optional ; values include "forward" or "bounce"
+    }
+    local imageHero = graphics.newImageSheet("assets/hero.png", options)
+    hero = display.newSprite(imageHero, sequenceData)
+    hero.x = display.contentCenterX
+    hero.y = display.contentCenterY + 150
+    hero:addEventListener("tap", tapOnHero)
 end
 
 
