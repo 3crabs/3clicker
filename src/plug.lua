@@ -7,17 +7,8 @@ local scene = composer.newScene()
 -- the scene is removed entirely (not recycled) via "composer.removeScene()"
 -- -----------------------------------------------------------------------------------
 
-
-local function gotoGame()
-    composer.gotoScene("src.plug", { time = 800, effect = "crossFade" })
-end
-
-local function gotoRecords()
-    composer.gotoScene("src.plug", { time = 800, effect = "crossFade" })
-end
-
-local function gotoShop()
-    composer.gotoScene("src.plug", { time = 800, effect = "crossFade" })
+local function gotoMenu()
+    composer.gotoScene("src.menu", { time = 800, effect = "crossFade" })
 end
 
 
@@ -31,27 +22,9 @@ function scene:create(event)
     local sceneGroup = self.view
     -- Code here runs when the scene is first created but has not yet appeared on screen
 
-    local background = display.newImageRect(sceneGroup, "assets/background_menu.png", 540, 960)
-    background.x = display.contentCenterX
-    background.y = display.contentCenterY
-
-    local playButton = display.newImageRect(sceneGroup, "assets/button_menu.png", 250, 70)
-    playButton.x = display.contentCenterX + 120
-    playButton.y = display.contentCenterY - 90
-    playButton:addEventListener("tap", gotoGame)
-    display.newText(sceneGroup, "Играть", display.contentCenterX + 120, display.contentCenterY - 90)
-
-    local recordsButton = display.newImageRect(sceneGroup, "assets/button_menu.png", 250, 70)
-    recordsButton.x = display.contentCenterX + 120
-    recordsButton.y = display.contentCenterY
-    recordsButton:addEventListener("tap", gotoRecords)
-    display.newText(sceneGroup, "Рекорды", display.contentCenterX + 120, display.contentCenterY)
-
-    local shopButton = display.newImageRect(sceneGroup, "assets/button_menu.png", 250, 70)
-    shopButton.x = display.contentCenterX + 120
-    shopButton.y = display.contentCenterY + 90
-    shopButton:addEventListener("tap", gotoShop)
-    display.newText(sceneGroup, "Магазин", display.contentCenterX + 120, display.contentCenterY + 90)
+    display.newText(sceneGroup, "Мы боремся за то чтобы этот раздел\nбыл доступен вам!", display.contentCenterX, display.contentCenterY)
+    local shopButton = display.newText(sceneGroup, "В меню", display.contentCenterX + 180, display.contentCenterY + 90)
+    shopButton:addEventListener("tap", gotoMenu)
 end
 
 
