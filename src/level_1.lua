@@ -8,13 +8,38 @@ local scene = composer.newScene()
 -- -----------------------------------------------------------------------------------
 
 local hero
-local countCoin = 0
-local countCoinText
+local countTab = 0
+local countTabText
 local prevTapTime = 0
+local levelTime = 40
+local timeText
+local levelCount = 200
+
+local function gotoResultScreen()
+    composer.gotoScene("src.plug", { time = 800, effect = "crossFade" })
+end
+
+local function checkEnd()
+    if (countTab >= levelCount) then
+        return true
+    end
+
+    if levelTime <= 0 then
+        return true
+    end
+    return false
+end
+
+local function checkWin()
+    if (countTab >= levelCount) then
+        return true
+    end
+    return false
+end
 
 local function tapOnHero()
-    countCoin = countCoin + 1
-    countCoinText.text = countCoin
+    countTab = countTab + 1
+    countTabText.text = countTab
 
     -- анимация героя
     transition.to(hero, { time = 50, xScale = 1.1, yScale = 1.1 })
@@ -24,12 +49,25 @@ local function tapOnHero()
     local currentTapTime = system.getTimer()
     local delta = currentTapTime - prevTapTime
     local scale = 1 / (delta / 300)
-    if scale < 1 then scale = 1 end
-    transition.to(countCoinText, { time = 50, xScale = scale, yScale = scale })
-    transition.to(countCoinText, { time = 100, delay = 55, xScale = 1, yScale = 1 })
+    if scale < 1 then
+        scale = 1
+    end
+    transition.to(countTabText, { time = 50, xScale = scale, yScale = scale })
+    transition.to(countTabText, { time = 100, delay = 55, xScale = 1, yScale = 1 })
     prevTapTime = currentTapTime
 end
 
+local function gameLoop()
+    if levelTime > 0 then
+        levelTime = levelTime - 1
+    end
+    timeText.text = levelTime
+
+    if checkEnd() then
+        composer.setVariable("gameResult", checkWin())
+        gotoResultScreen()
+    end
+end
 
 -- -----------------------------------------------------------------------------------
 -- Scene event functions
@@ -41,30 +79,16 @@ function scene:create(event)
     local sceneGroup = self.view
     -- Code here runs when the scene is first created but has not yet appeared on screen
 
-    countCoinText = display.newText(countCoin, display.contentCenterX, display.contentCenterY / 2, native.systemFont, 64)
+    local background = display.newImageRect(sceneGroup, "assets/background_level_1.png", 540, 960)
+    background.x = display.contentCenterX
+    background.y = display.contentCenterY
 
-    local options = {
-        -- Required parameters
-        width = 316,
-        height = 264,
-        numFrames = 1,
+    countTabText = display.newText(sceneGroup, countTab, display.contentCenterX, display.contentCenterY / 2, native.systemFont, 64)
+    timeText = display.newText(sceneGroup, levelTime, display.contentCenterX, display.contentCenterY / 3, native.systemFont, 64)
 
-        -- Optional parameters; used for scaled content support
-        sheetContentWidth = 316, -- width of original 1x size of entire sheet
-        sheetContentHeight = 264 -- height of original 1x size of entire sheet
-    }
-    local sequenceData = {
-        name = "walking",
-        start = 1,
-        count = 3,
-        time = 300,
-        loopCount = 2, -- Optional ; default is 0 (loop indefinitely)
-        loopDirection = "forward" -- Optional ; values include "forward" or "bounce"
-    }
-    local imageHero = graphics.newImageSheet("assets/hero.png", options)
-    hero = display.newSprite(imageHero, sequenceData)
+    hero = display.newImageRect(sceneGroup, "assets/hero.png", 316, 264)
     hero.x = display.contentCenterX
-    hero.y = display.contentCenterY + 150
+    hero.y = display.contentCenterY + display.contentCenterY / 3
     hero:addEventListener("tap", tapOnHero)
 end
 
@@ -80,7 +104,7 @@ function scene:show(event)
 
     elseif (phase == "did") then
         -- Code here runs when the scene is entirely on screen
-
+        gameLoopTimer = timer.performWithDelay(1000, gameLoop, 0)
     end
 end
 
@@ -96,7 +120,7 @@ function scene:hide(event)
 
     elseif (phase == "did") then
         -- Code here runs immediately after the scene goes entirely off screen
-
+        composer.removeScene("src.level_1")
     end
 end
 
