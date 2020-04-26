@@ -15,6 +15,8 @@ local levelTime = 40
 local timeText
 local levelCount = 200
 local gameLoopTimer
+local upGroup
+local downGroup
 
 local function checkEnd()
     if (countTab >= levelCount) then
@@ -40,6 +42,27 @@ local function gotoResultScreen()
     composer.gotoScene("src.result_1", { time = 800, effect = "crossFade" })
 end
 
+local function createMiniHero()
+    local h = math.random(20, 100)
+    local w = 1.2 * h
+    local newMiniHero = display.newImageRect(downGroup, "assets/hero.png", w, h)
+    newMiniHero.x = hero.x
+    newMiniHero.y = hero.y
+    newMiniHero:rotate(math.random(360))
+
+    local r = 800
+    local xEnd = (math.random(2*r) -r)
+    local yEnd = ((-1) ^ math.random(1, 2)) * math.sqrt(r * r - xEnd * xEnd)
+    transition.to(newMiniHero, {
+        x = xEnd + hero.x,
+        y = yEnd + hero.y,
+        time = 650,
+        onComplete = function()
+            display.remove(newMiniHero)
+        end
+    })
+end
+
 local function tapOnHero()
     if countTab < 200 then
         countTab = countTab + 1
@@ -60,6 +83,10 @@ local function tapOnHero()
     transition.to(countTabText, { time = 50, xScale = scale, yScale = scale })
     transition.to(countTabText, { time = 100, delay = 55, xScale = 1, yScale = 1 })
     prevTapTime = currentTapTime
+
+    for _ = 1, scale do
+        createMiniHero()
+    end
 end
 
 local function gameLoop()
@@ -74,6 +101,7 @@ local function gameLoop()
     end
 end
 
+
 -- -----------------------------------------------------------------------------------
 -- Scene event functions
 -- -----------------------------------------------------------------------------------
@@ -82,20 +110,27 @@ end
 function scene:create(event)
 
     local sceneGroup = self.view
+
+    downGroup = display.newGroup()  -- Display group for the ship, asteroids, lasers, etc.
+    sceneGroup:insert(downGroup)  -- Insert into the scene's view group
+
+    upGroup = display.newGroup()  -- Display group for the background image
+    sceneGroup:insert(upGroup)  -- Insert into the scene's view group
+
     -- Code here runs when the scene is first created but has not yet appeared on screen
 
-    local background = display.newImageRect(sceneGroup, "assets/background_level_1.png", 540, 960)
+    local background = display.newImageRect(downGroup, "assets/background_level_1.png", 540, 960)
     background.x = display.contentCenterX
     background.y = display.contentCenterY
 
-    countTabText = display.newText(sceneGroup, countTab, display.contentCenterX, display.contentCenterY / 2, native.systemFont, 64)
-    timeText = display.newText(sceneGroup, levelTime, display.contentCenterX, display.contentCenterY / 3, native.systemFont, 64)
+    countTabText = display.newText(downGroup, countTab, display.contentCenterX, display.contentCenterY / 2, native.systemFont, 64)
+    timeText = display.newText(downGroup, levelTime, display.contentCenterX, display.contentCenterY / 3, native.systemFont, 64)
 
-    local levelTabText = display.newText(sceneGroup, "Цель уровня: " .. levelCount, 20, 20, native.systemFont, 32)
+    local levelTabText = display.newText(downGroup, "Цель уровня: " .. levelCount, 20, 20, native.systemFont, 32)
     levelTabText.anchorX = 0
     levelTabText.anchorY = 0
 
-    hero = display.newImageRect(sceneGroup, "assets/hero.png", 316, 264)
+    hero = display.newImageRect(upGroup, "assets/hero.png", 316, 264)
     hero.x = display.contentCenterX
     hero.y = display.contentCenterY + display.contentCenterY / 3
     hero:addEventListener("tap", tapOnHero)
