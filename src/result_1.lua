@@ -12,6 +12,10 @@ local function gotoMenu()
     composer.gotoScene("src.menu", { time = 800, effect = "crossFade" })
 end
 
+local function nextLevel()
+    composer.gotoScene("src.plug", { time = 800, effect = "crossFade" })
+end
+
 
 -- -----------------------------------------------------------------------------------
 -- Scene event functions
@@ -23,8 +27,19 @@ function scene:create(event)
     local sceneGroup = self.view
     -- Code here runs when the scene is first created but has not yet appeared on screen
 
-    display.newText(sceneGroup, "Мы боремся за то чтобы этот раздел\nбыл доступен вам!\nС уважение команда 3CRABS games", display.contentCenterX, display.contentCenterY)
-    local shopButton = display.newText(sceneGroup, "перейти в меню", display.contentCenterX - 130, display.contentCenterY + 100)
+    local background = display.newImageRect(sceneGroup, "assets/background_level_1.png", 540, 960)
+    background.x = display.contentCenterX
+    background.y = display.contentCenterY
+
+    if composer.getVariable('isWin') then
+        text = 'Ура, вы прошли уровень!'
+        local shopButton = display.newText(sceneGroup, "дальше", display.contentCenterX, display.contentCenterY + 50)
+        shopButton:addEventListener("tap", nextLevel)
+    else
+        text = 'Увы, вы проиграли,\nпопробуйте снова!'
+    end
+    display.newText(sceneGroup, text, display.contentCenterX, display.contentCenterY / 2, native.systemFont, 32)
+    local shopButton = display.newText(sceneGroup, "перейти в меню", display.contentCenterX, display.contentCenterY + 100)
     shopButton:addEventListener("tap", gotoMenu)
 end
 
@@ -56,7 +71,7 @@ function scene:hide(event)
 
     elseif (phase == "did") then
         -- Code here runs immediately after the scene goes entirely off screen
-        composer.removeScene("src.plug")
+
     end
 end
 

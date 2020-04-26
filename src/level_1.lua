@@ -11,15 +11,10 @@ local hero
 local countTab = 0
 local countTabText
 local prevTapTime = 0
-local levelTime = 40
+local levelTime = 4
 local timeText
-local levelCount = 200
+local levelCount = 2
 local gameLoopTimer
-
-local function gotoResultScreen()
-    timer.cancel( gameLoopTimer )
-    composer.gotoScene("src.plug", { time = 800, effect = "crossFade" })
-end
 
 local function checkEnd()
     if (countTab >= levelCount) then
@@ -39,9 +34,17 @@ local function checkWin()
     return false
 end
 
+local function gotoResultScreen()
+    timer.cancel(gameLoopTimer)
+    composer.setVariable('isWin', checkWin())
+    composer.gotoScene("src.result_1", { time = 800, effect = "crossFade" })
+end
+
 local function tapOnHero()
-    countTab = countTab + 1
-    countTabText.text = countTab
+    if countTab < 200 then
+        countTab = countTab + 1
+        countTabText.text = countTab
+    end
 
     -- анимация героя
     transition.to(hero, { time = 50, xScale = 1.1, yScale = 1.1 })
@@ -62,8 +65,8 @@ end
 local function gameLoop()
     if levelTime > 0 then
         levelTime = levelTime - 1
+        timeText.text = levelTime
     end
-    timeText.text = levelTime
 
     if checkEnd() then
         composer.setVariable("gameResult", checkWin())
