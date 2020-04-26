@@ -5,6 +5,11 @@
 
 settings =
 {
+    splashScreen =
+    {
+        enable = true,
+        image = "assets/3CRABS_games.png"
+    },
 	orientation =
 	{
 		-- Supported values for orientation:
