@@ -7,26 +7,32 @@ local scene = composer.newScene()
 -- the scene is removed entirely (not recycled) via "composer.removeScene()"
 -- -----------------------------------------------------------------------------------
 
+local physics = require("physics")
+physics.start()
+physics.setGravity(0, 0)
+
+local startGame = false
+
 local hero
 local countTab = 0
 local countTabText
 local prevTapTime = 0
 local levelTime = 40
 local timeText
-local levelCount = 200
+local levelCount = 2
 local gameLoopTimer
 local upGroup
 local downGroup
 
 local function checkEnd()
-    if (countTab >= levelCount) then
-        return true
-    end
-
-    if levelTime <= 0 then
-        return true
-    end
-    return false
+    --if (countTab >= levelCount) then
+    --    return true
+    --end
+    --
+    --if levelTime <= 0 then
+    --    return true
+    --end
+    --return false
 end
 
 local function checkWin()
@@ -49,9 +55,10 @@ local function createMiniHero()
     newMiniHero.x = hero.x
     newMiniHero.y = hero.y
     newMiniHero:rotate(math.random(360))
+    physics.addBody(newMiniHero, "dynamic", { radius = w/2, bounce = 0.8 })
 
     local r = 800
-    local xEnd = (math.random(2*r) -r)
+    local xEnd = (math.random(2 * r) - r)
     local yEnd = ((-1) ^ math.random(1, 2)) * math.sqrt(r * r - xEnd * xEnd)
     transition.to(newMiniHero, {
         x = xEnd + hero.x,
@@ -64,7 +71,9 @@ local function createMiniHero()
 end
 
 local function tapOnHero()
-    if countTab < 200 then
+    startGame = true
+
+    if countTab < levelCount then
         countTab = countTab + 1
         countTabText.text = countTab
     end
@@ -90,7 +99,7 @@ local function tapOnHero()
 end
 
 local function gameLoop()
-    if levelTime > 0 then
+    if levelTime > 0 and startGame then
         levelTime = levelTime - 1
         timeText.text = levelTime
     end
@@ -123,8 +132,21 @@ function scene:create(event)
     background.x = display.contentCenterX
     background.y = display.contentCenterY
 
+    local platform_bottom = display.newRect(downGroup, display.contentCenterX, display.contentHeight, 540, 50)
+    platform_bottom:setFillColor(1, 1, 1, 0)
+    physics.addBody(platform_bottom, "static")
+    local platform_top = display.newRect(downGroup, display.contentCenterX, 0, 540, 50)
+    platform_top:setFillColor(1, 1, 1, 0)
+    physics.addBody(platform_top, "static")
+    local platform_left = display.newRect(downGroup, 0, display.contentCenterY, 50, 960)
+    platform_left:setFillColor(1, 1, 1, 0)
+    physics.addBody(platform_left, "static")
+    local platform_right = display.newRect(downGroup, display.contentWidth, display.contentCenterY, 50, 960)
+    platform_right:setFillColor(1, 1, 1, 0)
+    physics.addBody(platform_right, "static")
+
     countTabText = display.newText(downGroup, countTab, display.contentCenterX, display.contentCenterY / 2, native.systemFont, 64)
-    timeText = display.newText(downGroup, levelTime, display.contentCenterX, display.contentCenterY / 3, native.systemFont, 64)
+    timeText = display.newText(downGroup, levelTime, display.contentCenterX, display.contentCenterY / 3 - 30, native.systemFont, 64)
 
     local levelTabText = display.newText(downGroup, "Цель уровня: " .. levelCount, 20, 20, native.systemFont, 32)
     levelTabText.anchorX = 0
@@ -133,6 +155,8 @@ function scene:create(event)
     hero = display.newImageRect(upGroup, "assets/hero.png", 316, 264)
     hero.x = display.contentCenterX
     hero.y = display.contentCenterY + display.contentCenterY / 3
+    physics.addBody(hero, "dynamic", { radius = 150, bounce = 0.8 })
+
     hero:addEventListener("tap", tapOnHero)
 end
 
