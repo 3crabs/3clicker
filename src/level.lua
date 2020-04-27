@@ -11,6 +11,8 @@ local physics = require("physics")
 physics.start()
 physics.setGravity(0, 0)
 
+local monsterKillSound
+
 local startGame = false
 
 local hero
@@ -25,6 +27,10 @@ local upGroup
 local downGroup
 local number = composer.getVariable("number")
 
+local cock
+local streakLevel = 2
+local streakCount = 0
+
 local function getPostfix()
     return '_' .. number
 end
@@ -35,15 +41,15 @@ local function initLevel()
         levelTime = 30
     end
     if number == 2 then
-        levelCount = 400
+        levelCount = 300
         levelTime = 40
     end
     if number == 3 then
-        levelCount = 600
+        levelCount = 450
         levelTime = 50
     end
     if number == 4 then
-        levelCount = 1000
+        levelCount = 800
         levelTime = 60
     end
     if number == 5 then
@@ -51,11 +57,11 @@ local function initLevel()
         levelTime = 20
     end
     if number == 6 then
-        levelCount = 125
+        levelCount = 110
         levelTime = 15
     end
     if number == 7 then
-        levelCount = 100
+        levelCount = 90
         levelTime = 10
     end
 end
@@ -114,12 +120,7 @@ local function tapOnHero()
 
     if countTab < levelCount then
         countTab = countTab + 1
-        countTabText.text = countTab
     end
-
-    -- анимация героя
-    transition.to(hero, { time = 50, xScale = 1.1, yScale = 1.1 })
-    transition.to(hero, { time = 50, delay = 55, xScale = 1, yScale = 1 })
 
     -- анимация количества монет
     local currentTapTime = system.getTimer()
@@ -129,9 +130,36 @@ local function tapOnHero()
         scale = 1
     end
 
+    if scale >= streakLevel then
+        streakCount = streakCount + 1
+        if streakCount >= 5 then
+            countTab = countTab + 1
+            cock.x = display.contentCenterX - 130
+            cock.y = display.contentCenterY - 130
+        end
+    else
+        countTab = countTab + streakCount
+        streakCount = 0
+        cock.x = display.contentCenterX + 520
+        cock.y = display.contentCenterY + 140
+    end
+
     transition.to(countTabText, { time = 50, xScale = scale, yScale = scale })
     transition.to(countTabText, { time = 100, delay = 55, xScale = 1, yScale = 1 })
     prevTapTime = currentTapTime
+
+    -- анимация героя
+    local heroScaleX = 1.1
+    local heroScaleY = 1.1
+    if streakCount >= 10 then
+        heroScaleX = 0.8
+        heroScaleY = 0.8
+        monsterKillSound.play()
+    end
+    transition.to(hero, { time = 50, xScale = heroScaleX, yScale = heroScaleY })
+    transition.to(hero, { time = 50, delay = 55, xScale = 1, yScale = 1 })
+
+    countTabText.text = countTab
 
     for _ = 1, scale do
         createMiniHero()
@@ -162,6 +190,8 @@ function scene:create(event)
 
     initLevel()
 
+    monsterKillSound = audio.loadSound("sounds/monster_kill_sound.mp3")
+
     downGroup = display.newGroup()  -- Display group for the ship, asteroids, lasers, etc.
     sceneGroup:insert(downGroup)  -- Insert into the scene's view group
 
@@ -173,6 +203,30 @@ function scene:create(event)
     local background = display.newImageRect(downGroup, "assets/background_level" .. getPostfix() .. ".png", 540, 960)
     background.x = display.contentCenterX
     background.y = display.contentCenterY
+
+    -- петух
+    local cockSheetOptions = {
+        width = 725,
+        height = 378,
+        numFrames = 5,
+        sourceX = 150
+    }
+    local cockSheet = graphics.newImageSheet("assets/cock.png", cockSheetOptions)
+    local cockSequences = {
+        {
+            name = "normalRun",
+            start = 1,
+            count = 5,
+            time = 800,
+            loopCount = 0,
+            loopDirection = "forward"
+        }
+    }
+    cock = display.newSprite(downGroup, cockSheet, cockSequences)
+    cock.x = display.contentCenterX + 520
+    cock.y = display.contentCenterY + 140
+    cock:rotate(82)
+    cock:play()
 
     local platform_bottom = display.newRect(downGroup, display.contentCenterX, display.contentHeight, 540, 50)
     platform_bottom:setFillColor(1, 1, 1, 0)
@@ -241,6 +295,7 @@ function scene:destroy(event)
     local sceneGroup = self.view
     -- Code here runs prior to the removal of scene's view
 
+    audio.dispose(monsterKillSound)
 end
 
 

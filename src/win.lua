@@ -42,7 +42,6 @@ function scene:create(event)
 
     display.newText(sceneGroup, 'Ура, вы прошли уровень!', display.contentCenterX, display.contentCenterY - 100, native.systemFont, 32)
 
-
     if composer.getVariable("number") < 7 then
         local nextLevelButton = display.newImageRect(sceneGroup, "assets/button_menu.png", 250, 70)
         nextLevelButton.x = display.contentCenterX

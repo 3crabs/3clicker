@@ -13,7 +13,7 @@ display.setStatusBar(display.HiddenStatusBar)
 math.randomseed(os.time())
 
 -- Go to the menu screen
-composer.setVariable("number", 1)
+composer.setVariable("number", 7)
 composer.gotoScene("src.menu")
 --composer.gotoScene("src.level")
 --composer.gotoScene("src.death")
