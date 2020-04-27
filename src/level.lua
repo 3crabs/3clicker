@@ -154,7 +154,9 @@ local function tapOnHero()
     if streakCount >= 10 then
         heroScaleX = 0.8
         heroScaleY = 0.8
-        monsterKillSound.play()
+        if streakCount == 15 then
+            audio.play(monsterKillSound)
+        end
     end
     transition.to(hero, { time = 50, xScale = heroScaleX, yScale = heroScaleY })
     transition.to(hero, { time = 50, delay = 55, xScale = 1, yScale = 1 })
@@ -190,7 +192,7 @@ function scene:create(event)
 
     initLevel()
 
-    monsterKillSound = audio.loadSound("sounds/monster_kill_sound.mp3")
+    monsterKillSound = audio.loadSound("sounds/monster_kill.wav")
 
     downGroup = display.newGroup()  -- Display group for the ship, asteroids, lasers, etc.
     sceneGroup:insert(downGroup)  -- Insert into the scene's view group
