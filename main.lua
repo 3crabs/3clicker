@@ -13,5 +13,8 @@ display.setStatusBar(display.HiddenStatusBar)
 math.randomseed(os.time())
 
 -- Go to the menu screen
-composer.gotoScene("src.menu")
---composer.gotoScene("src.level_1")
+--composer.gotoScene("src.menu")
+--composer.setVariable("number", 1)
+--composer.gotoScene("src.level")
+--composer.gotoScene("src.death")
+composer.gotoScene("src.win")

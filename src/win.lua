@@ -27,20 +27,16 @@ function scene:create(event)
     local sceneGroup = self.view
     -- Code here runs when the scene is first created but has not yet appeared on screen
 
-    local background = display.newImageRect(sceneGroup, "assets/background_level_1.png", 540, 960)
+    local background = display.newImageRect(sceneGroup, "assets/background_win.png", 540, 960)
     background.x = display.contentCenterX
     background.y = display.contentCenterY
 
-    if composer.getVariable('isWin') then
-        text = 'Ура, вы прошли уровень!'
-        local shopButton = display.newText(sceneGroup, "дальше", display.contentCenterX, display.contentCenterY + 50)
-        shopButton:addEventListener("tap", nextLevel)
-    else
-        text = 'Увы, вы проиграли,\nпопробуйте снова!'
-    end
-    display.newText(sceneGroup, text, display.contentCenterX, display.contentCenterY / 2, native.systemFont, 32)
-    local shopButton = display.newText(sceneGroup, "перейти в меню", display.contentCenterX, display.contentCenterY + 100)
-    shopButton:addEventListener("tap", gotoMenu)
+    local shopButton = display.newText(sceneGroup, "дальше", display.contentCenterX, display.contentCenterY + 50)
+    shopButton:addEventListener("tap", nextLevel)
+
+    display.newText(sceneGroup, 'Ура, вы прошли уровень!', display.contentCenterX, display.contentCenterY / 2, native.systemFont, 32)
+    local menuButton = display.newText(sceneGroup, "перейти в меню", display.contentCenterX, display.contentCenterY + 100)
+    menuButton:addEventListener("tap", gotoMenu)
 end
 
 

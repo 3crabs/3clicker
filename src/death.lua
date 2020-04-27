@@ -7,22 +7,13 @@ local scene = composer.newScene()
 -- the scene is removed entirely (not recycled) via "composer.removeScene()"
 -- -----------------------------------------------------------------------------------
 
-local clickSound
 
-local function gotoGame()
-    audio.play(clickSound)
-    composer.setVariable("number", 1)
+local function gotoMenu()
+    composer.gotoScene("src.menu", { time = 800, effect = "crossFade" })
+end
+
+local function returnLevel()
     composer.gotoScene("src.level", { time = 800, effect = "crossFade" })
-end
-
-local function gotoRecords()
-    audio.play(clickSound)
-    composer.gotoScene("src.plug", { time = 800, effect = "crossFade" })
-end
-
-local function gotoShop()
-    audio.play(clickSound)
-    composer.gotoScene("src.plug", { time = 800, effect = "crossFade" })
 end
 
 
@@ -36,29 +27,16 @@ function scene:create(event)
     local sceneGroup = self.view
     -- Code here runs when the scene is first created but has not yet appeared on screen
 
-    clickSound = audio.loadSound("sounds/click.wav")
-
-    local background = display.newImageRect(sceneGroup, "assets/background_menu.png", 540, 960)
+    local background = display.newImageRect(sceneGroup, "assets/background_death.png", 540, 960)
     background.x = display.contentCenterX
     background.y = display.contentCenterY
 
-    local playButton = display.newImageRect(sceneGroup, "assets/button_menu.png", 250, 70)
-    playButton.x = display.contentCenterX + 120
-    playButton.y = display.contentCenterY - 90
-    playButton:addEventListener("tap", gotoGame)
-    display.newText(sceneGroup, "Играть", display.contentCenterX + 120, display.contentCenterY - 90)
+    local returnButton = display.newText(sceneGroup, "занова", display.contentCenterX, display.contentCenterY + 50)
+    returnButton:addEventListener("tap", returnLevel)
 
-    local recordsButton = display.newImageRect(sceneGroup, "assets/button_menu.png", 250, 70)
-    recordsButton.x = display.contentCenterX + 120
-    recordsButton.y = display.contentCenterY
-    recordsButton:addEventListener("tap", gotoRecords)
-    display.newText(sceneGroup, "Рекорды", display.contentCenterX + 120, display.contentCenterY)
-
-    local shopButton = display.newImageRect(sceneGroup, "assets/button_menu.png", 250, 70)
-    shopButton.x = display.contentCenterX + 120
-    shopButton.y = display.contentCenterY + 90
-    shopButton:addEventListener("tap", gotoShop)
-    display.newText(sceneGroup, "Магазин", display.contentCenterX + 120, display.contentCenterY + 90)
+    display.newText(sceneGroup, 'Увы, вы проиграли,\nпопробуйте снова!', display.contentCenterX, display.contentCenterY / 2, native.systemFont, 32)
+    local menuButton = display.newText(sceneGroup, "перейти в меню", display.contentCenterX, display.contentCenterY + 100)
+    menuButton:addEventListener("tap", gotoMenu)
 end
 
 
@@ -89,7 +67,7 @@ function scene:hide(event)
 
     elseif (phase == "did") then
         -- Code here runs immediately after the scene goes entirely off screen
-        composer.removeScene("src.menu")
+
     end
 end
 
@@ -100,7 +78,6 @@ function scene:destroy(event)
     local sceneGroup = self.view
     -- Code here runs prior to the removal of scene's view
 
-    audio.dispose(clickSound)
 end
 
 

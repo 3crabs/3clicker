@@ -17,12 +17,48 @@ local hero
 local countTab = 0
 local countTabText
 local prevTapTime = 0
-local levelTime = 40
+local levelTime
 local timeText
-local levelCount = 200
+local levelCount
 local gameLoopTimer
 local upGroup
 local downGroup
+local number = composer.getVariable("number")
+
+local function getPostfix()
+    return '_' .. number
+end
+
+local function initLevel()
+    if number == 1 then
+        levelCount = 200
+        levelTime = 30
+    end
+    if number == 2 then
+        levelCount = 400
+        levelTime = 40
+    end
+    if number == 3 then
+        levelCount = 600
+        levelTime = 50
+    end
+    if number == 4 then
+        levelCount = 1000
+        levelTime = 60
+    end
+    if number == 5 then
+        levelCount = 150
+        levelTime = 20
+    end
+    if number == 6 then
+        levelCount = 125
+        levelTime = 15
+    end
+    if number == 7 then
+        levelCount = 100
+        levelTime = 10
+    end
+end
 
 local function checkEnd()
     if (countTab >= levelCount) then
@@ -44,8 +80,11 @@ end
 
 local function gotoResultScreen()
     timer.cancel(gameLoopTimer)
-    composer.setVariable('isWin', checkWin())
-    composer.gotoScene("src.result_1", { time = 800, effect = "crossFade" })
+    if checkWin() then
+        composer.gotoScene("src.win", { time = 800, effect = "crossFade" })
+    else
+        composer.gotoScene("src.death", { time = 800, effect = "crossFade" })
+    end
 end
 
 local function createMiniHero()
@@ -55,7 +94,7 @@ local function createMiniHero()
     newMiniHero.x = hero.x
     newMiniHero.y = hero.y
     newMiniHero:rotate(math.random(360))
-    physics.addBody(newMiniHero, "dynamic", { radius = w/2, bounce = 0.8 })
+    physics.addBody(newMiniHero, "dynamic", { radius = w / 2, bounce = 0.8 })
 
     local r = 800
     local xEnd = (math.random(2 * r) - r)
@@ -120,6 +159,8 @@ function scene:create(event)
 
     local sceneGroup = self.view
 
+    initLevel()
+
     downGroup = display.newGroup()  -- Display group for the ship, asteroids, lasers, etc.
     sceneGroup:insert(downGroup)  -- Insert into the scene's view group
 
@@ -128,7 +169,7 @@ function scene:create(event)
 
     -- Code here runs when the scene is first created but has not yet appeared on screen
 
-    local background = display.newImageRect(downGroup, "assets/background_level_1.png", 540, 960)
+    local background = display.newImageRect(downGroup, "assets/background_level" .. getPostfix() .. ".png", 540, 960)
     background.x = display.contentCenterX
     background.y = display.contentCenterY
 
@@ -188,7 +229,7 @@ function scene:hide(event)
 
     elseif (phase == "did") then
         -- Code here runs immediately after the scene goes entirely off screen
-        composer.removeScene("src.level_1")
+        composer.removeScene("src.level")
     end
 end
 
