@@ -31,12 +31,22 @@ function scene:create(event)
     background.x = display.contentCenterX
     background.y = display.contentCenterY
 
-    local returnButton = display.newText(sceneGroup, "занова", display.contentCenterX, display.contentCenterY + 50)
-    returnButton:addEventListener("tap", returnLevel)
+    local rect = display.newRect(sceneGroup, display.contentCenterX, display.contentCenterY, 450, 500)
+    rect:setFillColor(0, 0, 0, 0.7)
 
-    display.newText(sceneGroup, 'Увы, вы проиграли,\nпопробуйте снова!', display.contentCenterX, display.contentCenterY / 2, native.systemFont, 32)
-    local menuButton = display.newText(sceneGroup, "перейти в меню", display.contentCenterX, display.contentCenterY + 100)
+    display.newText(sceneGroup, 'Увы, вы проиграли,\nпопробуйте снова!', display.contentCenterX, display.contentCenterY - 100, native.systemFont, 32)
+
+    local returnButton = display.newImageRect(sceneGroup, "assets/button_menu.png", 250, 70)
+    returnButton.x = display.contentCenterX
+    returnButton.y = display.contentCenterY + 70
+    returnButton:addEventListener("tap", returnLevel)
+    display.newText(sceneGroup, "занова", display.contentCenterX, display.contentCenterY + 70)
+
+    local menuButton = display.newImageRect(sceneGroup, "assets/button_menu.png", 250, 70)
+    menuButton.x = display.contentCenterX
+    menuButton.y = display.contentCenterY + 160
     menuButton:addEventListener("tap", gotoMenu)
+    display.newText(sceneGroup, "перейти в меню", display.contentCenterX, display.contentCenterY + 160)
 end
 
 

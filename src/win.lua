@@ -13,7 +13,8 @@ local function gotoMenu()
 end
 
 local function nextLevel()
-    composer.gotoScene("src.plug", { time = 800, effect = "crossFade" })
+    composer.setVariable("number", composer.getVariable("number") + 1)
+    composer.gotoScene("src.level", { time = 800, effect = "crossFade" })
 end
 
 
@@ -31,12 +32,27 @@ function scene:create(event)
     background.x = display.contentCenterX
     background.y = display.contentCenterY
 
-    local shopButton = display.newText(sceneGroup, "дальше", display.contentCenterX, display.contentCenterY + 50)
-    shopButton:addEventListener("tap", nextLevel)
+    local rect = display.newRect(sceneGroup, display.contentCenterX, display.contentCenterY, 450, 500)
+    rect:setFillColor(0, 0, 0, 0.7)
 
-    display.newText(sceneGroup, 'Ура, вы прошли уровень!', display.contentCenterX, display.contentCenterY / 2, native.systemFont, 32)
-    local menuButton = display.newText(sceneGroup, "перейти в меню", display.contentCenterX, display.contentCenterY + 100)
+    display.newText(sceneGroup, 'Ура, вы прошли уровень!', display.contentCenterX, display.contentCenterY - 100, native.systemFont, 32)
+
+
+    if composer.getVariable("number") < 7 then
+        local nextLevelButton = display.newImageRect(sceneGroup, "assets/button_menu.png", 250, 70)
+        nextLevelButton.x = display.contentCenterX
+        nextLevelButton.y = display.contentCenterY + 70
+        nextLevelButton:addEventListener("tap", nextLevel)
+        display.newText(sceneGroup, "дальше", display.contentCenterX, display.contentCenterY + 70)
+    else
+        display.newText(sceneGroup, 'Вы прошли beta\nверсию 3clicker!', display.contentCenterX, display.contentCenterY, native.systemFont, 32)
+    end
+
+    local menuButton = display.newImageRect(sceneGroup, "assets/button_menu.png", 250, 70)
+    menuButton.x = display.contentCenterX
+    menuButton.y = display.contentCenterY + 160
     menuButton:addEventListener("tap", gotoMenu)
+    display.newText(sceneGroup, "перейти в меню", display.contentCenterX, display.contentCenterY + 160)
 end
 
 
