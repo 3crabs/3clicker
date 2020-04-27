@@ -7,16 +7,20 @@ local scene = composer.newScene()
 -- the scene is removed entirely (not recycled) via "composer.removeScene()"
 -- -----------------------------------------------------------------------------------
 
+local clickSound
 
 local function gotoGame()
+    audio.play(clickSound)
     composer.gotoScene("src.level_1", { time = 800, effect = "crossFade" })
 end
 
 local function gotoRecords()
+    audio.play(clickSound)
     composer.gotoScene("src.plug", { time = 800, effect = "crossFade" })
 end
 
 local function gotoShop()
+    audio.play(clickSound)
     composer.gotoScene("src.plug", { time = 800, effect = "crossFade" })
 end
 
@@ -30,6 +34,8 @@ function scene:create(event)
 
     local sceneGroup = self.view
     -- Code here runs when the scene is first created but has not yet appeared on screen
+
+    clickSound = audio.loadSound("sounds/click.wav")
 
     local background = display.newImageRect(sceneGroup, "assets/background_menu.png", 540, 960)
     background.x = display.contentCenterX
@@ -93,6 +99,7 @@ function scene:destroy(event)
     local sceneGroup = self.view
     -- Code here runs prior to the removal of scene's view
 
+    audio.dispose(clickSound)
 end
 
 
