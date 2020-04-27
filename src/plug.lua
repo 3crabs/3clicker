@@ -7,8 +7,10 @@ local scene = composer.newScene()
 -- the scene is removed entirely (not recycled) via "composer.removeScene()"
 -- -----------------------------------------------------------------------------------
 
+local clickSound
 
 local function gotoMenu()
+    audio.play(clickSound)
     composer.gotoScene("src.menu", { time = 800, effect = "crossFade" })
 end
 
@@ -21,9 +23,11 @@ end
 function scene:create(event)
 
     local sceneGroup = self.view
+
+    clickSound = audio.loadSound("sounds/click.wav")
     -- Code here runs when the scene is first created but has not yet appeared on screen
 
-    display.newText(sceneGroup, "Мы боремся за то чтобы этот раздел\nбыл доступен вам!\nС уважение команда 3CRABS games", display.contentCenterX, display.contentCenterY)
+    display.newText(sceneGroup, "Мы боремся за то, чтобы этот раздел\nбыл доступен вам!\nС уважением,\nкоманда 3CRABS games", display.contentCenterX, display.contentCenterY)
     local shopButton = display.newText(sceneGroup, "перейти в меню", display.contentCenterX - 130, display.contentCenterY + 100)
     shopButton:addEventListener("tap", gotoMenu)
 end
@@ -67,6 +71,7 @@ function scene:destroy(event)
     local sceneGroup = self.view
     -- Code here runs prior to the removal of scene's view
 
+    audio.dispose(clickSound)
 end
 
 

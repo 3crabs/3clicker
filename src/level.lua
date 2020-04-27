@@ -128,6 +128,7 @@ local function tapOnHero()
     if scale < 1 then
         scale = 1
     end
+
     transition.to(countTabText, { time = 50, xScale = scale, yScale = scale })
     transition.to(countTabText, { time = 100, delay = 55, xScale = 1, yScale = 1 })
     prevTapTime = currentTapTime

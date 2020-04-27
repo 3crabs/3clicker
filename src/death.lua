@@ -7,12 +7,15 @@ local scene = composer.newScene()
 -- the scene is removed entirely (not recycled) via "composer.removeScene()"
 -- -----------------------------------------------------------------------------------
 
+local clickSound
 
 local function gotoMenu()
+    audio.play(clickSound)
     composer.gotoScene("src.menu", { time = 800, effect = "crossFade" })
 end
 
 local function returnLevel()
+    audio.play(clickSound)
     composer.gotoScene("src.level", { time = 800, effect = "crossFade" })
 end
 
@@ -25,6 +28,8 @@ end
 function scene:create(event)
 
     local sceneGroup = self.view
+
+    clickSound = audio.loadSound("sounds/click.wav")
     -- Code here runs when the scene is first created but has not yet appeared on screen
 
     local background = display.newImageRect(sceneGroup, "assets/background_death.png", 540, 960)
@@ -40,7 +45,7 @@ function scene:create(event)
     returnButton.x = display.contentCenterX
     returnButton.y = display.contentCenterY + 70
     returnButton:addEventListener("tap", returnLevel)
-    display.newText(sceneGroup, "занова", display.contentCenterX, display.contentCenterY + 70)
+    display.newText(sceneGroup, "заново", display.contentCenterX, display.contentCenterY + 70)
 
     local menuButton = display.newImageRect(sceneGroup, "assets/button_menu.png", 250, 70)
     menuButton.x = display.contentCenterX
@@ -88,6 +93,7 @@ function scene:destroy(event)
     local sceneGroup = self.view
     -- Code here runs prior to the removal of scene's view
 
+    audio.dispose(clickSound)
 end
 
 
