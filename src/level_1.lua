@@ -19,20 +19,20 @@ local countTabText
 local prevTapTime = 0
 local levelTime = 40
 local timeText
-local levelCount = 2
+local levelCount = 200
 local gameLoopTimer
 local upGroup
 local downGroup
 
 local function checkEnd()
-    --if (countTab >= levelCount) then
-    --    return true
-    --end
-    --
-    --if levelTime <= 0 then
-    --    return true
-    --end
-    --return false
+    if (countTab >= levelCount) then
+        return true
+    end
+
+    if levelTime <= 0 then
+        return true
+    end
+    return false
 end
 
 local function checkWin()
