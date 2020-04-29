@@ -58,11 +58,11 @@ local function initLevel()
         levelTime = 20
     end
     if number == 6 then
-        levelCount = 110
+        levelCount = 11
         levelTime = 15
     end
     if number == 7 then
-        levelCount = 90
+        levelCount = 9
         levelTime = 10
     end
 end
@@ -72,7 +72,7 @@ local function gotoMenu()
 end
 
 local function checkEnd()
-    if (countTab >= levelCount) then
+    if countTab >= levelCount then
         return true
     end
 
@@ -83,7 +83,7 @@ local function checkEnd()
 end
 
 local function checkWin()
-    if (countTab >= levelCount) then
+    if countTab >= levelCount then
         return true
     end
     return false

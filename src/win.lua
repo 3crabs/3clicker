@@ -16,8 +16,9 @@ end
 
 local function nextLevel()
     audio.play(clickSound)
-    composer.setVariable("number", composer.getVariable("number") + 1)
+    composer.setVariable("number", tonumber(composer.getVariable("number")) + 1)
     composer.gotoScene("src.level", { time = 800, effect = "crossFade" })
+    composer.removeScene("src.win")
 end
 
 
@@ -42,14 +43,14 @@ function scene:create(event)
 
     display.newText(sceneGroup, 'Ура, вы прошли уровень!', display.contentCenterX, display.contentCenterY - 100, native.systemFont, 32)
 
-    if composer.getVariable("number") < 7 then
+    if (tonumber(composer.getVariable("number")) == 7) then
+        display.newText(sceneGroup, 'Вы прошли beta\nверсию 3clicker!', display.contentCenterX, display.contentCenterY, native.systemFont, 32)
+    else
         local nextLevelButton = display.newImageRect(sceneGroup, "assets/button_menu.png", 250, 70)
         nextLevelButton.x = display.contentCenterX
         nextLevelButton.y = display.contentCenterY + 70
         nextLevelButton:addEventListener("tap", nextLevel)
         display.newText(sceneGroup, "дальше", display.contentCenterX, display.contentCenterY + 70)
-    else
-        display.newText(sceneGroup, 'Вы прошли beta\nверсию 3clicker!', display.contentCenterX, display.contentCenterY, native.systemFont, 32)
     end
 
     local menuButton = display.newImageRect(sceneGroup, "assets/button_menu.png", 250, 70)
