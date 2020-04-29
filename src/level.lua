@@ -17,7 +17,6 @@ local startGame = false
 
 local hero
 local countTab = 0
-local countTabText
 local prevTapTime = 0
 local levelTime
 local timeText
@@ -26,6 +25,8 @@ local gameLoopTimer
 local upGroup
 local downGroup
 local number = composer.getVariable("number")
+
+local progressBar
 
 local cock
 local streakLevel = 2
@@ -66,6 +67,10 @@ local function initLevel()
     end
 end
 
+local function gotoMenu()
+    composer.gotoScene("src.menu", { time = 800, effect = "crossFade" })
+end
+
 local function checkEnd()
     if (countTab >= levelCount) then
         return true
@@ -85,7 +90,6 @@ local function checkWin()
 end
 
 local function gotoResultScreen()
-    timer.cancel(gameLoopTimer)
     if checkWin() then
         composer.gotoScene("src.win", { time = 800, effect = "crossFade" })
     else
@@ -144,8 +148,6 @@ local function tapOnHero()
         cock.y = display.contentCenterY + 140
     end
 
-    transition.to(countTabText, { time = 50, xScale = scale, yScale = scale })
-    transition.to(countTabText, { time = 100, delay = 55, xScale = 1, yScale = 1 })
     prevTapTime = currentTapTime
 
     -- анимация героя
@@ -161,11 +163,12 @@ local function tapOnHero()
     transition.to(hero, { time = 50, xScale = heroScaleX, yScale = heroScaleY })
     transition.to(hero, { time = 50, delay = 55, xScale = 1, yScale = 1 })
 
-    countTabText.text = countTab
-
     for _ = 1, scale do
         createMiniHero()
     end
+
+    -- прогрес бар
+    progressBar.width = display.contentWidth / levelCount * countTab
 end
 
 local function gameLoop()
@@ -180,6 +183,24 @@ local function gameLoop()
     end
 end
 
+-- Called when a key event has been received
+local function onKeyEvent(event)
+
+    -- If the "back" key was pressed on Android, prevent it from backing out of the app
+    if (event.keyName == "back") then
+        if (system.getInfo("platform") == "android") then
+            gotoMenu()
+            return true
+        end
+    end
+
+    -- IMPORTANT! Return false to indicate that this app is NOT overriding the received key
+    -- This lets the operating system execute its default handling of the key
+    return false
+end
+
+-- Add the key event listener
+Runtime:addEventListener("key", onKeyEvent)
 
 -- -----------------------------------------------------------------------------------
 -- Scene event functions
@@ -205,6 +226,13 @@ function scene:create(event)
     local background = display.newImageRect(downGroup, "assets/background_level" .. getPostfix() .. ".png", 540, 960)
     background.x = display.contentCenterX
     background.y = display.contentCenterY
+
+    --прогрес бар
+    local backgroundProgressBar = display.newRoundedRect(downGroup, display.contentCenterX, 10, display.contentWidth, 20, 5)
+    backgroundProgressBar:setFillColor(1, 1, 1, 0.5)
+    progressBar = display.newRoundedRect(downGroup, 0, 10, 0, 20, 5)
+    progressBar:setFillColor(0.4, 0.7, 0.4, 0.8)
+    progressBar.anchorX = 0
 
     -- петух
     local cockSheetOptions = {
@@ -243,10 +271,9 @@ function scene:create(event)
     platform_right:setFillColor(1, 1, 1, 0)
     physics.addBody(platform_right, "static")
 
-    countTabText = display.newText(downGroup, countTab, display.contentCenterX, display.contentCenterY / 2, native.systemFont, 64)
     timeText = display.newText(downGroup, levelTime, display.contentCenterX, display.contentCenterY / 3 - 30, native.systemFont, 64)
 
-    local levelTabText = display.newText(downGroup, "Цель уровня: " .. levelCount, 20, 20, native.systemFont, 32)
+    local levelTabText = display.newText(downGroup, "Цель уровня: " .. levelCount, 20, 30, native.systemFont, 32)
     levelTabText.anchorX = 0
     levelTabText.anchorY = 0
 
@@ -283,7 +310,7 @@ function scene:hide(event)
 
     if (phase == "will") then
         -- Code here runs when the scene is on screen (but is about to go off screen)
-
+        timer.cancel(gameLoopTimer)
     elseif (phase == "did") then
         -- Code here runs immediately after the scene goes entirely off screen
         composer.removeScene("src.level")
@@ -299,7 +326,6 @@ function scene:destroy(event)
 
     audio.dispose(monsterKillSound)
 end
-
 
 -- -----------------------------------------------------------------------------------
 -- Scene event function listeners
