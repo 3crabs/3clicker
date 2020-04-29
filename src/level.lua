@@ -58,11 +58,11 @@ local function initLevel()
         levelTime = 20
     end
     if number == 6 then
-        levelCount = 11
+        levelCount = 110
         levelTime = 15
     end
     if number == 7 then
-        levelCount = 9
+        levelCount = 90
         levelTime = 10
     end
 end
